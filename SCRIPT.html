@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site: Mapa Mental de Vendas SPIN - AutoArremate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Mapa mental interativo dos scripts de vendas SPIN da AutoArremate. Explore diferentes focos e estratégias de vendas para otimizar seu processo comercial.">
+    <meta name="keywords" content="AutoArremate, SPIN selling, mapa mental, vendas, scripts de vendas, CRM, DMS, técnicas de venda, funil de vendas">
+    <meta name="author" content="AutoArremate">
+    <link rel="icon" href="https://www.autoarremate.com.br/wp-content/uploads/2022/03/cropped-favicon-32x32.png" sizes="32x32">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Cor de fundo suave para o corpo da página */
+            color: #1c2e42; /* Cor de texto principal (cls-5 do seu SVG) */
+            display: flex;
+            flex-direction: column; /* Organiza header, main, footer verticalmente */
+            min-height: 100vh; /* Garante que o footer fique no final, mesmo com pouco conteúdo */
+            margin: 0; /* Remove margens padrão do body */
+        }
+        header {
+            background-color: #ffffff; /* Branco para o cabeçalho */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
+        }
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto; /* Centraliza o conteúdo do header */
+            padding: 1rem 1.5rem; /* Espaçamento interno */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-logo {
+            height: 40px; /* Ajuste a altura do logo conforme necessário */
+        }
+        .header-title {
+            font-size: 1.5rem; /* Tamanho do título no header */
+            font-weight: 600;
+            color: #1c2e42;
+        }
+
+        main {
+            flex-grow: 1; /* Permite que o main ocupe o espaço disponível */
+            padding-top: 1.5rem; /* Espaçamento acima do mapa mental */
+            padding-bottom: 1.5rem; /* Espaçamento abaixo do mapa mental */
+        }
+
+        .mind-map-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px; /* Largura máxima do conteúdo do mapa */
+            margin: 0 auto; /* Centraliza o mapa */
+            padding: 0 20px; /* Adiciona padding lateral para telas menores */
+            box-sizing: border-box;
+        }
+        /* Estilos dos Nós do Mapa Mental */
+        .node {
+            background-color: #ffffff;
+            border: 1px solid #a5a5a5; /* cinza (cls-2) */
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease-in-out;
+            min-width: 200px;
+            max-width: 90%;
+        }
+        .node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .node.central-topic {
+            background-color: #1c2e42; /* azul escuro (cls-5) */
+            color: #ffffff; /* branco (cls-1) */
+            font-size: 1.5rem;
+            padding: 20px 30px;
+        }
+        .node.main-branch {
+            background-color: #15af97; /* verde/teal (cls-3) */
+            color: #ffffff; /* branco (cls-1) */
+            font-size: 1.1rem;
+            width: auto;
+            min-width: 350px;
+            text-align: left;
+            padding-left: 25px;
+        }
+        .node.spin-s { background-color: #3b82f6; color: #ffffff; } /* Azul */
+        .node.spin-p { background-color: #f97316; color: #ffffff; } /* Laranja */
+        .node.spin-i { background-color: #ec4899; color: #ffffff; } /* Rosa */
+        .node.spin-n { background-color: #22c55e; color: #ffffff; } /* Verde */
+        .node.spin-detail {
+            background-color: #e0f2f1; /* Verde bem claro, derivado de #15af97 */
+            color: #1c2e42;
+            text-align: left;
+            padding: 10px;
+            font-size: 0.9rem;
+            white-space: normal;
+            min-width: 250px;
+            border-color: #a5a5a5;
+        }
+
+        /* Estrutura e Layout do Mapa Mental */
+        .main-branches-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding-left: 0;
+            position: relative;
+            width: 100%;
+        }
+        .main-branch-item-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        .main-branch-item-container:last-child {
+            margin-bottom: 0;
+        }
+        .children {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            padding-left: 0;
+            position: relative;
+            width: 100%;
+        }
+        .child-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+            position: relative;
+        }
+        .hidden { display: none; }
+        .node-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+
+        /* Linhas de Conexão */
+        .main-branches-container::before,
+        .main-branch-item-container > .children::before,
+        .child-container .children::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 10px;
+            background-color: #a5a5a5; /* cinza (cls-2) */
+        }
+        /* Ícones de expandir/recolher foram removidos visualmente */
+        .toggler::before, .expanded > .toggler::before, .leaf-node .toggler::before {
+            content: '';
+        }
+
+        footer {
+            background-color: #1c2e42; /* azul escuro (cls-5) */
+            color: #ffffff; /* branco (cls-1) */
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto; /* Empurra o footer para o final da página */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <img src="https://www.autoarremate.com.br/wp-content/uploads/2022/09/logo-horizontal-padrao.svg" alt="Logo AutoArremate" class="header-logo">
+            <h1 class="header-title">Mapa Mental de Vendas SPIN</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="mind-map-container">
+            <div class="node-container">
+                <div id="central-topic" class="node central-topic toggler">Scripts de Vendas SPIN - AutoArremate</div>
+                <div class="main-branches-container hidden">
+                    <div class="main-branch-item-container"> 
+                        <div class="node main-branch toggler">1. Foco em Avaliação Eficiente e Integrada</div>
+                        <div class="children hidden"> 
+                            <div class="child-container">
+                                <div class="node spin-s toggler">S (Situação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Como vocês estão gerenciando o processo de avaliação dos veículos de trade-in atualmente?"</div>
+                                    <div class="node spin-detail leaf-node">"Qual o DMS vocês utilizam hoje?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-p toggler">P (Problema)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Com o processo atual, vocês enfrentam desafios como a necessidade de digitar manualmente os dados do veículo no sistema, mesmo após a consulta da placa?"</div>
+                                    <div class="node spin-detail leaf-node">"Existe alguma preocupação com a segurança das informações ou possíveis fraudes durante a entrada de dados para avaliação?"</div>
+                                    <div class="node spin-detail leaf-node">"A falta de uma integração mais fluida entre a avaliação e o DMS tem gerado algum retrabalho ou tomado um tempo considerável da sua equipe?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-i toggler">I (Implicação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Se houver retrabalho ou demora, qual o impacto disso na agilidade da sua equipe de vendas para precificar e fechar negócios com os seminovos?"</div>
+                                    <div class="node spin-detail leaf-node">"Pensando na segurança, uma falha na verificação de dados do proprietário ou do veículo poderia levar a prejuízos financeiros ou problemas legais para a concessionária?"</div>
+                                    <div class="node spin-detail leaf-node">"Quanto tempo ou até mesmo quantos negócios vocês estimam que poderiam ser otimizados se o processo de avaliação fosse mais rápido e seguro?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Então, se existisse uma ferramenta que se integrasse perfeitamente ao seu DMS, puxando automaticamente todos os dados do veículo a partir da placa e ainda realizando verificações para prevenir fraudes, isso traria mais eficiência, segurança e agilidade para a sua operação de seminovos?"</div>
+                                    <div class="node spin-detail leaf-node">"Seria valioso para vocês ter um processo onde, dentro do próprio DMS, vocês pudessem iniciar uma avaliação completa, com dados confiáveis e sem redigitação, liberando tempo da equipe para focar no cliente?"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-branch-item-container">
+                        <div class="node main-branch toggler">2. Foco na Geração de Leads de Trade-in</div>
+                        <div class="children hidden">
+                            <div class="child-container">
+                                <div class="node spin-s toggler">S (Situação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Como tem sido a performance da sua ferramenta de avaliação online para captar leads de clientes interessados em dar o carro na troca?"</div>
+                                    <div class="node spin-detail leaf-node">"Atualmente, em que momento do processo online vocês capturam os dados de contato do cliente: antes ou depois de ele ver uma estimativa de preço?"</div>
+                                </div>
+                            </div>
+                             <div class="child-container">
+                                <div class="node spin-p toggler">P (Problema)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Vocês já perceberam alguma situação onde o cliente visualiza a precificação online, talvez não goste do valor inicial por algum motivo, e simplesmente abandona a página sem deixar nenhum contato?"</div>
+                                    <div class="node spin-detail leaf-node">"A necessidade de o cliente preencher muitos campos sobre o veículo manualmente para obter uma cotação tem sido um impeditivo para a conversão desses visitantes em leads?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-i toggler">I (Implicação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Essa perda de potenciais leads, que demonstram interesse inicial mas não convertem, representa quantos negócios a menos no final do mês para a sua equipe de seminovos?"</div>
+                                    <div class="node spin-detail leaf-node">"Como essa dinâmica afeta o custo de aquisição de leads e o volume do seu funil de vendas para carros de trade-in?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Se vocês tivessem uma forma de garantir a captura do contato do interessado antes de ele receber a precificação, e ainda simplificassem o processo para ele, apenas com a placa, vocês acreditam que o volume de leads qualificados para a equipe trabalhar aumentaria consideravelmente?"</div>
+                                    <div class="node spin-detail leaf-node">"Ter mais leads para trabalhar, mesmo aqueles que inicialmente não concordaram com o preço online mas que agora vocês têm o contato para negociar, faria diferença nos seus resultados?"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-branch-item-container">
+                        <div class="node main-branch toggler">3. Foco em Repasse Ágil e Ampla Rede de Compradores</div>
+                        <div class="children hidden">
+                            <div class="child-container">
+                                <div class="node spin-s toggler">S (Situação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Como está o giro dos seus veículos destinados a repasse atualmente?"</div>
+                                    <div class="node spin-detail leaf-node">"Quais plataformas ou métodos vocês mais utilizam hoje para comercializar esses carros para outros lojistas?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-p toggler">P (Problema)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Vocês têm enfrentado alguma dificuldade para vender certos perfis de veículos de repasse com a agilidade desejada nas plataformas atuais?"</div>
+                                    <div class="node spin-detail leaf-node">"Sentem que, às vezes, a disputa pelos seus carros poderia ser maior se tivessem acesso a uma base mais ampla e diversificada de lojistas compradores?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-i toggler">I (Implicação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Manter esses carros parados no pátio por muito tempo gera um custo de capital imobilizado, correto? Como isso impacta o fluxo de caixa da concessionária e a capacidade de investir em novos veículos para o trade-in?"</div>
+                                    <div class="node spin-detail leaf-node">"A demora no repasse ou a venda por um preço abaixo do ideal afeta a rentabilidade geral da sua operação de seminovos?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Se vocês pudessem contar com uma plataforma que oferece acesso a uma rede de mais de 4.000 lojistas ativos só no interior de São Paulo, e que não exige exclusividade, permitindo ampliar seus canais, isso ajudaria a escoar esses veículos de repasse mais rapidamente e com melhor rentabilidade?"</div>
+                                    <div class="node spin-detail leaf-node">"Ter mais uma plataforma, com uma base grande de compradores, para anunciar seus carros de repasse, aumentaria a competitividade e, consequentemente, as chances de melhores ofertas?"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-branch-item-container">
+                        <div class="node main-branch toggler">4. Foco em Redução de Cancelamentos e Suporte Diferenciado</div>
+                         <div class="children hidden">
+                            <div class="child-container">
+                                <div class="node spin-s toggler">S (Situação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Como tem sido a sua experiência com relação a cancelamentos de vendas após o arremate ou aceite da proposta nas plataformas que utiliza para repasse?"</div>
+                                    <div class="node spin-detail leaf-node">"E como você avalia o suporte que recebe dessas ferramentas quando surge algum problema ou dúvida?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-p toggler">P (Problema)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Esses cancelamentos, quando ocorrem, geram muita frustração para a equipe e para a gerência, além do retrabalho de ter que anunciar o carro novamente?"</div>
+                                    <div class="node spin-detail leaf-node">"Você sente falta, às vezes, de um suporte mais próximo, talvez até presencial, para resolver questões ou otimizar o uso da ferramenta, especialmente considerando que estamos aqui em Ribeirão Preto?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-i toggler">I (Implicação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Qual o impacto desses cancelamentos e do tempo gasto gerenciando essas situações na produtividade da sua equipe e na previsibilidade do seu faturamento com repasses?"</div>
+                                    <div class="node spin-detail leaf-node">"A falta de um suporte ágil e eficaz pode deixar sua equipe se sentindo desamparada ou levar a um subaproveitamento dos recursos da plataforma?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Se vocês tivessem acesso a uma plataforma com uma taxa de cancelamento em concessionárias significativamente menor, abaixo de 1%, e que ainda oferecesse um time dedicado para fazer uma checagem proativa das ofertas com os lojistas, isso traria mais segurança e tranquilidade para suas operações de repasse?"</div>
+                                    <div class="node spin-detail leaf-node">"Saber que pode contar com um suporte local aqui em Ribeirão Preto, com a possibilidade de treinamentos presenciais e um acompanhamento mais próximo, seria um diferencial importante para vocês?"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="main-branch-item-container">
+                        <div class="node main-branch toggler">5. Foco em Otimização da Precificação de Estoque com Dados de Mercado</div>
+                        <div class="children hidden">
+                            <div class="child-container">
+                                <div class="node spin-s toggler">S (Situação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Como vocês definem atualmente os preços dos veículos em seu estoque de seminovos?"</div>
+                                    <div class="node spin-detail leaf-node">"Vocês utilizam alguma ferramenta ou fonte de dados de mercado para auxiliar na precificação?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-p toggler">P (Problema)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Já aconteceu de veículos ficarem parados no estoque por muito tempo devido a uma precificação não competitiva, ou, por outro lado, sentem que poderiam ter vendido por um valor melhor em algumas situações?"</div>
+                                    <div class="node spin-detail leaf-node">"A falta de dados de mercado em tempo real dificulta a tomada de decisão rápida sobre ajustes de preços para otimizar o giro e a margem?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-i toggler">I (Implicação)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Manter veículos com preços desalinhados com o mercado pode impactar diretamente o capital de giro e a rentabilidade da operation de seminovos, correto?"</div>
+                                    <div class="node spin-detail leaf-node">"Quanto um veículo parado além do ideal no estoque representa em termos de custo de oportunidade e desvalorização para a concessionária?"</div>
+                                </div>
+                            </div>
+                            <div class="child-container">
+                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
+                                <div class="children hidden">
+                                    <div class="node spin-detail leaf-node">"Se vocês tivessem acesso a uma plataforma que fornecesse dados de mercado atualizados, ajudando a identificar a precificação ideal para cada veículo do seu estoque, considerando a demanda e a oferta regional, isso ajudaria a otimizar o giro e maximizar as margens?"</div>
+                                    <div class="node spin-detail leaf-node">"Seria valioso ter uma ferramenta que oferecesse insights para uma estratégia de precificação mais dinâmica e assertiva, resultando em vendas mais rápidas e lucrativas?"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AutoArremate. Todos os direitos reservados.</p> </footer>
+
+    <script>
+        // Script para funcionalidade de expandir/recolher
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglers = document.querySelectorAll('.toggler');
+
+            togglers.forEach(toggler => {
+                let childrenContainer = toggler.parentElement.querySelector('.main-branches-container'); 
+                if (!childrenContainer || childrenContainer.parentElement !== toggler.parentElement) { 
+                    childrenContainer = toggler.parentElement.querySelector(':scope > .children'); 
+                }
+
+                if (childrenContainer) { 
+                    toggler.addEventListener('click', function (event) {
+                        event.stopPropagation(); 
+                        childrenContainer.classList.toggle('hidden');
+                        toggler.classList.toggle('expanded'); // A classe 'expanded' pode ser usada para outros estilos, se necessário
+                    });
+                } else {
+                    if(toggler.classList.contains('toggler')){ 
+                        toggler.classList.remove('toggler');
+                        toggler.classList.add('leaf-node'); 
+                    }
+                }
+            });
+
+            // Opcional: Expandir o primeiro nível por padrão
+            const centralTopic = document.getElementById('central-topic');
+            if (centralTopic) {
+                const firstLevelChildrenContainer = centralTopic.parentElement.querySelector('.main-branches-container');
+                if (firstLevelChildrenContainer) {
+                    firstLevelChildrenContainer.classList.remove('hidden');
+                    centralTopic.classList.add('expanded');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
