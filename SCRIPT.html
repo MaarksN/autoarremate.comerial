@@ -1,411 +1,587 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site: Mapa Mental de Vendas SPIN - AutoArremate</title>
+    <title>CRM Auto Arremate - Painel Avançado</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="description" content="Mapa mental interativo dos scripts de vendas SPIN da AutoArremate. Explore diferentes focos e estratégias de vendas para otimizar seu processo comercial.">
-    <meta name="keywords" content="AutoArremate, SPIN selling, mapa mental, vendas, scripts de vendas, CRM, DMS, técnicas de venda, funil de vendas">
-    <meta name="author" content="AutoArremate">
-    <link rel="icon" href="https://www.autoarremate.com.br/wp-content/uploads/2022/03/cropped-favicon-32x32.png" sizes="32x32">
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Cor de fundo suave para o corpo da página */
-            color: #1c2e42; /* Cor de texto principal (cls-5 do seu SVG) */
-            display: flex;
-            flex-direction: column; /* Organiza header, main, footer verticalmente */
-            min-height: 100vh; /* Garante que o footer fique no final, mesmo com pouco conteúdo */
-            margin: 0; /* Remove margens padrão do body */
-        }
-        header {
-            background-color: #ffffff; /* Branco para o cabeçalho */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra suave */
-        }
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto; /* Centraliza o conteúdo do header */
-            padding: 1rem 1.5rem; /* Espaçamento interno */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header-logo {
-            height: 40px; /* Ajuste a altura do logo conforme necessário */
-        }
-        .header-title {
-            font-size: 1.5rem; /* Tamanho do título no header */
-            font-weight: 600;
-            color: #1c2e42;
-        }
-
-        main {
-            flex-grow: 1; /* Permite que o main ocupe o espaço disponível */
-            padding-top: 1.5rem; /* Espaçamento acima do mapa mental */
-            padding-bottom: 1.5rem; /* Espaçamento abaixo do mapa mental */
-        }
-
-        .mind-map-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 1200px; /* Largura máxima do conteúdo do mapa */
-            margin: 0 auto; /* Centraliza o mapa */
-            padding: 0 20px; /* Adiciona padding lateral para telas menores */
-            box-sizing: border-box;
-        }
-        /* Estilos dos Nós do Mapa Mental */
-        .node {
-            background-color: #ffffff;
-            border: 1px solid #a5a5a5; /* cinza (cls-2) */
-            border-radius: 8px;
-            padding: 12px 18px;
-            margin: 10px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s ease-in-out;
-            min-width: 200px;
-            max-width: 90%;
-        }
-        .node:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .node.central-topic {
-            background-color: #1c2e42; /* azul escuro (cls-5) */
-            color: #ffffff; /* branco (cls-1) */
-            font-size: 1.5rem;
-            padding: 20px 30px;
-        }
-        .node.main-branch {
-            background-color: #15af97; /* verde/teal (cls-3) */
-            color: #ffffff; /* branco (cls-1) */
-            font-size: 1.1rem;
-            width: auto;
-            min-width: 350px;
-            text-align: left;
-            padding-left: 25px;
-        }
-        .node.spin-s { background-color: #3b82f6; color: #ffffff; } /* Azul */
-        .node.spin-p { background-color: #f97316; color: #ffffff; } /* Laranja */
-        .node.spin-i { background-color: #ec4899; color: #ffffff; } /* Rosa */
-        .node.spin-n { background-color: #22c55e; color: #ffffff; } /* Verde */
-        .node.spin-detail {
-            background-color: #e0f2f1; /* Verde bem claro, derivado de #15af97 */
-            color: #1c2e42;
-            text-align: left;
-            padding: 10px;
-            font-size: 0.9rem;
-            white-space: normal;
-            min-width: 250px;
-            border-color: #a5a5a5;
-        }
-
-        /* Estrutura e Layout do Mapa Mental */
-        .main-branches-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-            padding-left: 0;
-            position: relative;
-            width: 100%;
-        }
-        .main-branch-item-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 25px;
-        }
-        .main-branch-item-container:last-child {
-            margin-bottom: 0;
-        }
-        .children {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 20px;
-            padding-left: 0;
-            position: relative;
-            width: 100%;
-        }
-        .child-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 10px;
-            position: relative;
-        }
-        .hidden { display: none; }
-        .node-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            width: 100%;
-        }
-
-        /* Linhas de Conexão */
-        .main-branches-container::before,
-        .main-branch-item-container > .children::before,
-        .child-container .children::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 10px;
-            background-color: #a5a5a5; /* cinza (cls-2) */
-        }
-        /* Ícones de expandir/recolher foram removidos visualmente */
-        .toggler::before, .expanded > .toggler::before, .leaf-node .toggler::before {
-            content: '';
-        }
-
-        footer {
-            background-color: #1c2e42; /* azul escuro (cls-5) */
-            color: #ffffff; /* branco (cls-1) */
-            text-align: center;
-            padding: 1rem;
-            margin-top: auto; /* Empurra o footer para o final da página */
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
 </head>
-<body>
 
-    <header>
-        <div class="header-container">
-            <img src="https://www.autoarremate.com.br/wp-content/uploads/2022/09/logo-horizontal-padrao.svg" alt="Logo AutoArremate" class="header-logo">
-            <h1 class="header-title">Mapa Mental de Vendas SPIN</h1>
-        </div>
-    </header>
+<body class="antialiased">
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://www.autoarremate.com.br/wp-content/uploads/2022/09/logo-horizontal-padrao.svg" alt="Logo AutoArremate" class="sidebar-logo" onerror="this.onerror=null; this.src='https://placehold.co/180x45/1c2e42/ffffff?text=AutoArremate&font=raleway'; this.style.objectFit='contain';">
+            </div>
+            <nav class="sidebar-nav flex-grow">
+                <ul>
+                    <li><a href="#dashboardView" class="nav-link active">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2.25 2A2.25 2.25 0 000 4.25v11.5A2.25 2.25 0 002.25 18h15.5A2.25 2.25 0 0020 15.75V4.25A2.25 2.25 0 0017.75 2H2.25zM3.5 6.25v1.5h3V6.25h-3zm0 3.5v1.5h3V9.75h-3zm0 3.5v1.5h3v-1.5h-3zm5-7v1.5h3V6.25h-3zm0 3.5v1.5h3V9.75h-3zm0 3.5v1.5h3v-1.5h-3zm5-7v1.5h3V6.25h-3zm0 3.5v1.5h3V9.75h-3zm0 3.5v1.5h3v-1.5h-3z" clip-rule="evenodd" /></svg>
+                        Dashboard</a></li>
+                    <li><a href="#leadsView" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M3.5 3A1.5 1.5 0 002 4.5v11A1.5 1.5 0 003.5 17h13a1.5 1.5 0 001.5-1.5v-11A1.5 1.5 0 0016.5 3h-13zM10 9a.75.75 0 00-1.5 0v1.25H7.25a.75.75 0 000 1.5H8.5V13a.75.75 0 001.5 0v-1.25h1.25a.75.75 0 000-1.5H10V9z" /><path d="M5.5 5.25a.75.75 0 000 1.5h9a.75.75 0 000-1.5h-9z" /></svg>
+                        Leads</a></li>
+                    <li><a href="#funnelView" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2.878 2.878a.75.75 0 000 1.06l5.793 5.793a.75.75 0 010 1.06L2.878 16.58a.75.75 0 101.06 1.06L9.75 11.824l5.812 5.814a.75.75 0 001.06-1.06L10.81 10.75l5.814-5.812a.75.75 0 00-1.06-1.06L9.75 9.69 3.939 3.878a.75.75 0 00-1.061 0z" clip-rule="evenodd" /></svg>
+                        Funil de Vendas</a></li>
+                    <li><a href="#reportsView" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M15.992 4.012a.75.75 0 01.75.75v10.476a.75.75 0 01-1.28.53L12.5 12.59V4.762a.75.75 0 01.75-.75h2.742zm-3.992 0a.75.75 0 01.75.75v6.188L9.78 8.004a.75.75 0 00-1.06 0L5.75 10.95V4.762a.75.75 0 01.75-.75h5.492zM4.008 4.012a.75.75 0 01.75.75v10.476a.75.75 0 01-1.28.53L.51 12.812A2.25 2.25 0 010 11.25v-4.5a2.25 2.25 0 011.581-2.15L3.5 4.062a.75.75 0 01.508-.05z" clip-rule="evenodd" /></svg>
+                        Relatórios</a></li>
+                    <li><a href="#remindersView" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM8.005 4.495a.75.75 0 01.75-.055l.25.1a.75.75 0 01.45 1.085l-1.25 3.001a.75.75 0 01-1.086.45l-.25-.1a.75.75 0 01-.45-1.085l1.25-3.001a.75.75 0 01.341-.445zM11.995 4.495a.75.75 0 01.396.976l-1.25 3.001a.75.75 0 01-1.085-.45l-.25-.1a.75.75 0 01.45-1.085l1.25-3.001a.75.75 0 01.484-.341zM10 6a4 4 0 100 8 4 4 0 000-8zm-6.25.75A.75.75 0 003 7.5v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V7.5a.75.75 0 00-.75-.75H3.75zm12.5 0A.75.75 0 0015.5 7.5v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V7.5a.75.75 0 00-.75-.75h-.008zM7.25 12a.75.75 0 000 1.5h5.5a.75.75 0 000-1.5h-5.5z" clip-rule="evenodd" /></svg>
+                        Lembretes de Tarefas</a></li>
+                </ul>
+            </nav>
+            <div class="mt-auto p-2 text-center">
+                <button id="themeToggleBtn" class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)] focus:ring-offset-[var(--bg-content)]">
+                    <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                </button>
+            </div>
+        </aside>
 
-    <main>
-        <div class="mind-map-container">
-            <div class="node-container">
-                <div id="central-topic" class="node central-topic toggler">Scripts de Vendas SPIN - AutoArremate</div>
-                <div class="main-branches-container hidden">
-                    <div class="main-branch-item-container"> 
-                        <div class="node main-branch toggler">1. Foco em Avaliação Eficiente e Integrada</div>
-                        <div class="children hidden"> 
-                            <div class="child-container">
-                                <div class="node spin-s toggler">S (Situação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Como vocês estão gerenciando o processo de avaliação dos veículos de trade-in atualmente?"</div>
-                                    <div class="node spin-detail leaf-node">"Qual o DMS vocês utilizam hoje?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-p toggler">P (Problema)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Com o processo atual, vocês enfrentam desafios como a necessidade de digitar manualmente os dados do veículo no sistema, mesmo após a consulta da placa?"</div>
-                                    <div class="node spin-detail leaf-node">"Existe alguma preocupação com a segurança das informações ou possíveis fraudes durante a entrada de dados para avaliação?"</div>
-                                    <div class="node spin-detail leaf-node">"A falta de uma integração mais fluida entre a avaliação e o DMS tem gerado algum retrabalho ou tomado um tempo considerável da sua equipe?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-i toggler">I (Implicação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Se houver retrabalho ou demora, qual o impacto disso na agilidade da sua equipe de vendas para precificar e fechar negócios com os seminovos?"</div>
-                                    <div class="node spin-detail leaf-node">"Pensando na segurança, uma falha na verificação de dados do proprietário ou do veículo poderia levar a prejuízos financeiros ou problemas legais para a concessionária?"</div>
-                                    <div class="node spin-detail leaf-node">"Quanto tempo ou até mesmo quantos negócios vocês estimam que poderiam ser otimizados se o processo de avaliação fosse mais rápido e seguro?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Então, se existisse uma ferramenta que se integrasse perfeitamente ao seu DMS, puxando automaticamente todos os dados do veículo a partir da placa e ainda realizando verificações para prevenir fraudes, isso traria mais eficiência, segurança e agilidade para a sua operação de seminovos?"</div>
-                                    <div class="node spin-detail leaf-node">"Seria valioso para vocês ter um processo onde, dentro do próprio DMS, vocês pudessem iniciar uma avaliação completa, com dados confiáveis e sem redigitação, liberando tempo da equipe para focar no cliente?"</div>
-                                </div>
-                            </div>
+        <div class="main-content-wrapper"> <main class="main-content-area">
+                <div class="container-app-header">
+                    <h1 id="pageTitle" class="page-title">Dashboard</h1>
+                    <div class="flex items-center gap-4"> <div id="appClock" class="app-clock">--:--:--</div>
+                        <div id="backupSection" class="p-1 bg-[var(--bg-interactive)] rounded-md text-xs">
+                            <button id="backupNowBtn" class="action-button bg-green-600 hover:bg-green-700 text-white font-semibold py-1 px-2 text-xs">Backup JSON</button>
+                            <span id="backupReminder" class="ml-1 text-[var(--text-muted)]"></span>
                         </div>
-                    </div>
-
-                    <div class="main-branch-item-container">
-                        <div class="node main-branch toggler">2. Foco na Geração de Leads de Trade-in</div>
-                        <div class="children hidden">
-                            <div class="child-container">
-                                <div class="node spin-s toggler">S (Situação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Como tem sido a performance da sua ferramenta de avaliação online para captar leads de clientes interessados em dar o carro na troca?"</div>
-                                    <div class="node spin-detail leaf-node">"Atualmente, em que momento do processo online vocês capturam os dados de contato do cliente: antes ou depois de ele ver uma estimativa de preço?"</div>
-                                </div>
-                            </div>
-                             <div class="child-container">
-                                <div class="node spin-p toggler">P (Problema)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Vocês já perceberam alguma situação onde o cliente visualiza a precificação online, talvez não goste do valor inicial por algum motivo, e simplesmente abandona a página sem deixar nenhum contato?"</div>
-                                    <div class="node spin-detail leaf-node">"A necessidade de o cliente preencher muitos campos sobre o veículo manualmente para obter uma cotação tem sido um impeditivo para a conversão desses visitantes em leads?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-i toggler">I (Implicação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Essa perda de potenciais leads, que demonstram interesse inicial mas não convertem, representa quantos negócios a menos no final do mês para a sua equipe de seminovos?"</div>
-                                    <div class="node spin-detail leaf-node">"Como essa dinâmica afeta o custo de aquisição de leads e o volume do seu funil de vendas para carros de trade-in?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Se vocês tivessem uma forma de garantir a captura do contato do interessado antes de ele receber a precificação, e ainda simplificassem o processo para ele, apenas com a placa, vocês acreditam que o volume de leads qualificados para a equipe trabalhar aumentaria consideravelmente?"</div>
-                                    <div class="node spin-detail leaf-node">"Ter mais leads para trabalhar, mesmo aqueles que inicialmente não concordaram com o preço online mas que agora vocês têm o contato para negociar, faria diferença nos seus resultados?"</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="main-branch-item-container">
-                        <div class="node main-branch toggler">3. Foco em Repasse Ágil e Ampla Rede de Compradores</div>
-                        <div class="children hidden">
-                            <div class="child-container">
-                                <div class="node spin-s toggler">S (Situação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Como está o giro dos seus veículos destinados a repasse atualmente?"</div>
-                                    <div class="node spin-detail leaf-node">"Quais plataformas ou métodos vocês mais utilizam hoje para comercializar esses carros para outros lojistas?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-p toggler">P (Problema)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Vocês têm enfrentado alguma dificuldade para vender certos perfis de veículos de repasse com a agilidade desejada nas plataformas atuais?"</div>
-                                    <div class="node spin-detail leaf-node">"Sentem que, às vezes, a disputa pelos seus carros poderia ser maior se tivessem acesso a uma base mais ampla e diversificada de lojistas compradores?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-i toggler">I (Implicação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Manter esses carros parados no pátio por muito tempo gera um custo de capital imobilizado, correto? Como isso impacta o fluxo de caixa da concessionária e a capacidade de investir em novos veículos para o trade-in?"</div>
-                                    <div class="node spin-detail leaf-node">"A demora no repasse ou a venda por um preço abaixo do ideal afeta a rentabilidade geral da sua operação de seminovos?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Se vocês pudessem contar com uma plataforma que oferece acesso a uma rede de mais de 4.000 lojistas ativos só no interior de São Paulo, e que não exige exclusividade, permitindo ampliar seus canais, isso ajudaria a escoar esses veículos de repasse mais rapidamente e com melhor rentabilidade?"</div>
-                                    <div class="node spin-detail leaf-node">"Ter mais uma plataforma, com uma base grande de compradores, para anunciar seus carros de repasse, aumentaria a competitividade e, consequentemente, as chances de melhores ofertas?"</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="main-branch-item-container">
-                        <div class="node main-branch toggler">4. Foco em Redução de Cancelamentos e Suporte Diferenciado</div>
-                         <div class="children hidden">
-                            <div class="child-container">
-                                <div class="node spin-s toggler">S (Situação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Como tem sido a sua experiência com relação a cancelamentos de vendas após o arremate ou aceite da proposta nas plataformas que utiliza para repasse?"</div>
-                                    <div class="node spin-detail leaf-node">"E como você avalia o suporte que recebe dessas ferramentas quando surge algum problema ou dúvida?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-p toggler">P (Problema)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Esses cancelamentos, quando ocorrem, geram muita frustração para a equipe e para a gerência, além do retrabalho de ter que anunciar o carro novamente?"</div>
-                                    <div class="node spin-detail leaf-node">"Você sente falta, às vezes, de um suporte mais próximo, talvez até presencial, para resolver questões ou otimizar o uso da ferramenta, especialmente considerando que estamos aqui em Ribeirão Preto?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-i toggler">I (Implicação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Qual o impacto desses cancelamentos e do tempo gasto gerenciando essas situações na produtividade da sua equipe e na previsibilidade do seu faturamento com repasses?"</div>
-                                    <div class="node spin-detail leaf-node">"A falta de um suporte ágil e eficaz pode deixar sua equipe se sentindo desamparada ou levar a um subaproveitamento dos recursos da plataforma?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Se vocês tivessem acesso a uma plataforma com uma taxa de cancelamento em concessionárias significativamente menor, abaixo de 1%, e que ainda oferecesse um time dedicado para fazer uma checagem proativa das ofertas com os lojistas, isso traria mais segurança e tranquilidade para suas operações de repasse?"</div>
-                                    <div class="node spin-detail leaf-node">"Saber que pode contar com um suporte local aqui em Ribeirão Preto, com a possibilidade de treinamentos presenciais e um acompanhamento mais próximo, seria um diferencial importante para vocês?"</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="main-branch-item-container">
-                        <div class="node main-branch toggler">5. Foco em Otimização da Precificação de Estoque com Dados de Mercado</div>
-                        <div class="children hidden">
-                            <div class="child-container">
-                                <div class="node spin-s toggler">S (Situação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Como vocês definem atualmente os preços dos veículos em seu estoque de seminovos?"</div>
-                                    <div class="node spin-detail leaf-node">"Vocês utilizam alguma ferramenta ou fonte de dados de mercado para auxiliar na precificação?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-p toggler">P (Problema)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Já aconteceu de veículos ficarem parados no estoque por muito tempo devido a uma precificação não competitiva, ou, por outro lado, sentem que poderiam ter vendido por um valor melhor em algumas situações?"</div>
-                                    <div class="node spin-detail leaf-node">"A falta de dados de mercado em tempo real dificulta a tomada de decisão rápida sobre ajustes de preços para otimizar o giro e a margem?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-i toggler">I (Implicação)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Manter veículos com preços desalinhados com o mercado pode impactar diretamente o capital de giro e a rentabilidade da operation de seminovos, correto?"</div>
-                                    <div class="node spin-detail leaf-node">"Quanto um veículo parado além do ideal no estoque representa em termos de custo de oportunidade e desvalorização para a concessionária?"</div>
-                                </div>
-                            </div>
-                            <div class="child-container">
-                                <div class="node spin-n toggler">N (Necessidade de Solução)</div>
-                                <div class="children hidden">
-                                    <div class="node spin-detail leaf-node">"Se vocês tivessem acesso a uma plataforma que fornecesse dados de mercado atualizados, ajudando a identificar a precificação ideal para cada veículo do seu estoque, considerando a demanda e a oferta regional, isso ajudaria a otimizar o giro e maximizar as margens?"</div>
-                                    <div class="node spin-detail leaf-node">"Seria valioso ter uma ferramenta que oferecesse insights para uma estratégia de precificação mais dinâmica e assertiva, resultando em vendas mais rápidas e lucrativas?"</div>
-                                </div>
-                            </div>
-                        </div>
+                        <button id="saveChangesBtn" class="action-button bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 text-xs">
+                            Salvar Manualmente
+                        </button>
                     </div>
                 </div>
+                <div id="toast-container"></div>
+
+                <section id="dashboardView" class="content-section active">
+                    <h2 class="section-title"><span class="emoji">📊</span>Dashboard de Performance</h2>
+                    <div id="dashboard" class="dashboard-grid">
+                        </div>
+                </section>
+
+                <section id="leadsView" class="content-section">
+                    <h2 class="section-title"><span class="emoji">📋</span>Lista Detalhada de Leads</h2>
+                    <div class="filters-container flex flex-wrap gap-4 items-end mb-4 p-4 rounded-lg shadow-sm" style="background-color: var(--bg-interactive); border: 1px solid var(--border-color);">
+                        <div class="flex-grow min-w-[150px]"> <label for="filterNome" class="block text-xs font-medium mb-1 text-[var(--text-muted)]">Filtrar por Nome/Marca/Grupo:</label>
+                            <input type="text" id="filterNome" class="w-full p-2 text-sm border-[var(--border-color)] rounded-md shadow-sm focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)] bg-[var(--bg-content)] text-[var(--text-content)]" placeholder="Digite para filtrar...">
+                        </div>
+                        <div class="flex-grow min-w-[150px]">
+                            <label for="filterEstado" class="block text-xs font-medium mb-1 text-[var(--text-muted)]">Filtrar por Estado:</label>
+                            <select id="filterEstado" class="w-full p-2 text-sm border-[var(--border-color)] rounded-md shadow-sm focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)] bg-[var(--bg-content)] text-[var(--text-content)]">
+                                <option value="">TODOS OS ESTADOS</option>
+                                </select>
+                        </div>
+                        <div class="flex-grow min-w-[150px]">
+                            <label for="filterStatus" class="block text-xs font-medium mb-1 text-[var(--text-muted)]">Filtrar por Status:</label>
+                            <select id="filterStatus" class="w-full p-2 text-sm border-[var(--border-color)] rounded-md shadow-sm focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)] bg-[var(--bg-content)] text-[var(--text-content)]">
+                                <option value="">TODOS OS STATUS</option>
+                                </select>
+                        </div>
+                        <button id="clearFilters" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md text-xs shadow-sm transition duration-150 h-9 mt-auto self-end">Limpar Filtros</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="leadsTable"> <thead>
+                                <tr>
+                                    <th>Lead Score</th>
+                                    <th>Empresa</th>
+                                    <th>PDV (Lojas)</th>
+                                    <th>Marca</th>
+                                    <th>Nome Contacto</th>
+                                    <th>Cargo Contacto</th>
+                                    <th>Endereço</th>
+                                    <th>Telefone</th>
+                                    <th>Email</th>
+                                    <th>LinkedIn</th>
+                                    <th>Fez Contato?</th>
+                                    <th>Status Lead</th>
+                                    <th>Temperatura</th>
+                                    <th>Reunião Agendada?</th>
+                                    <th>Estado</th>
+                                    <th>Cidade</th>
+                                    <th>Data Criação</th>
+                                    <th>Origem</th>
+                                    <th>Data Tarefa</th>
+                                    <th>Tipo Tarefa</th>
+                                    <th>Resposta Tarefa</th>
+                                    <th>Próxima Tarefa Data</th>
+                                    <th>Observações</th>
+                                    <th>Interações IA</th>
+                                    <th>Motivo Perda</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="26" class="text-center p-8 text-lg text-[var(--text-muted)]">CARREGANDO DADOS...</td>
+                                </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                    <p id="rowCount" class="mt-4 text-sm text-right" style="color: var(--text-muted);"></p>
+                </section>
+
+                <section id="funnelView" class="content-section">
+                    <h2 class="section-title"><span class="emoji">🚦</span>Funil de Vendas Interativo</h2>
+                    <div id="salesFunnelContainer">
+                        <div id="salesFunnel" class="p-2">
+                            </div>
+                    </div>
+                </section>
+
+                <section id="reportsView" class="content-section">
+                    <h2 class="section-title"><span class="emoji">📈</span>Relatórios e Análises</h2>
+                    <div class="report-controls mb-6 p-4 rounded-lg shadow-sm" style="background-color: var(--bg-interactive); border: 1px solid var(--border-color);">
+                        <div class="flex flex-wrap gap-4 items-end">
+                            <div>
+                                <label for="reportStartDate" class="block text-sm font-medium">Data Início:</label>
+                                <input type="date" id="reportStartDate" name="reportStartDate" class="mt-1">
+                            </div>
+                            <div>
+                                <label for="reportEndDate" class="block text-sm font-medium">Data Fim:</label>
+                                <input type="date" id="reportEndDate" name="reportEndDate" class="mt-1">
+                            </div>
+                            <div>
+                                <label for="reportStatusFilter" class="block text-sm font-medium">Filtrar Status:</label>
+                                <select id="reportStatusFilter" name="reportStatusFilter" class="mt-1">
+                                    <option value="">Todos</option>
+                                    </select>
+                            </div>
+                            <div>
+                                <label for="reportTemperaturaFilter" class="block text-sm font-medium">Filtrar Temperatura:</label>
+                                <select id="reportTemperaturaFilter" name="reportTemperaturaFilter" class="mt-1">
+                                    <option value="">Todas</option>
+                                    </select>
+                            </div>
+                            <div>
+                                <label for="reportOrigemFilter" class="block text-sm font-medium">Filtrar Origem:</label>
+                                <select id="reportOrigemFilter" name="reportOrigemFilter" class="mt-1">
+                                    <option value="">Todas</option>
+                                    </select>
+                            </div>
+                            <button id="generateReportBtn" class="action-button bg-blue-500 hover:bg-blue-700 text-xs self-end">✨ Gerar Relatório com IA</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2 text-[var(--accent-secondary)]">Resumo e Análise (Gerado por IA):</h3>
+                        <pre id="reportContentArea" class="p-4 rounded-md min-h-[150px]"></pre>
+                    </div>
+                </section>
+
+                <section id="remindersView" class="content-section">
+                    <h2 class="section-title"><span class="emoji">🔔</span>Lembretes de Tarefas</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-3 text-red-500">🚨 Atrasadas</h3>
+                            <ul id="overdueTasksList" class="task-list"></ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-3 text-orange-500">📅 Para Hoje</h3>
+                            <ul id="todayTasksList" class="task-list"></ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-3 text-blue-500">🗓️ Para Amanhã</h3>
+                            <ul id="tomorrowTasksList" class="task-list"></ul>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3">
+                            <h3 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">📆 Próximos 7 Dias</h3>
+                            <ul id="next7DaysTasksList" class="task-list"></ul>
+                        </div>
+                    </div>
+                </section>
+            </main> <footer class="footer-app"> <p>&copy; <span id="currentYearFooter"></span> Auto Arremate S/A. Todos os direitos reservados.</p>
+                <p class="text-xs mt-1">
+                    Ao utilizar este painel, concorda com os Termos de Uso e a Política de Privacidade da Auto Arremate.
+                    É fundamental tratar todos os dados dos leads em conformidade com a LGPD e as diretrizes internas da
+                    empresa.
+                </p>
+            </footer>
+        </div> </div> <button id="openAddLeadModalBtn" class="fixed bottom-8 right-8 bg-[var(--accent-primary)] text-white p-4 rounded-full shadow-lg hover:bg-[var(--accent-primary-darker)] transition duration-150 ease-in-out z-30" title="Adicionar Novo Lead">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+    </button>
+
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="addLeadModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border w-11/12 md:w-3/5 lg:w-1/2 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-[var(--border-color)]">
+                <h3 class="text-xl font-semibold">Adicionar Novo Lead</h3>
+                <button id="closeAddLeadModal" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="text-extract-area">
+                <label for="addLeadPasteArea" class="block text-sm font-medium text-[var(--text-muted)] mb-1">Cole informações do lead aqui para extração automática:</label>
+                <textarea id="addLeadPasteArea" rows="3" class="w-full p-2 border rounded-md" placeholder="Ex: Email de assinatura, notas rápidas..."></textarea>
+                <button type="button" id="addLeadExtractBtn" class="action-button extract-data-btn mt-2">✨ Extrair Dados de Texto</button>
+            </div>
+            <form id="addLeadForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="newLeadEmpresa" class="block text-sm font-medium">Nome da Empresa*</label>
+                        <input type="text" id="newLeadEmpresa" name="nome_empresa" required class="mt-1">
+                    </div>
+                    <div>
+                        <label for="newLeadPdv" class="block text-sm font-medium">Nº de PDVs (Lojas)</label>
+                        <input type="number" id="newLeadPdv" name="pdv" class="mt-1" min="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="newLeadMarca" class="block text-sm font-medium">Marca Principal</label>
+                        <select id="newLeadMarca" name="marca" class="mt-1"></select>
+                    </div>
+                    <div><label for="newLeadTelefone1" class="block text-sm font-medium">Telefone</label><input type="tel" id="newLeadTelefone1" name="telefone1" class="mt-1" placeholder="(XX) XXXXX-XXXX"></div>
+                </div>
+                <div>
+                    <label for="newLeadContatoNome" class="block text-sm font-medium">Nome do Contacto</label><input type="text" id="newLeadContatoNome" name="contato_nome" class="mt-1">
+                </div>
+                <div>
+                    <label for="newLeadContatoCargo" class="block text-sm font-medium">Cargo do Contacto</label>
+                    <select id="newLeadContatoCargo" name="contato_cargo" class="mt-1"></select>
+                </div>
+                <div><label for="newLeadEndereco" class="block text-sm font-medium">Endereço</label><input type="text" id="newLeadEndereco" name="endereco" class="mt-1"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label for="newLeadCidade" class="block text-sm font-medium">Cidade</label><input type="text" id="newLeadCidade" name="cidade" class="mt-1"></div>
+                    <div>
+                        <label for="newLeadEstado" class="block text-sm font-medium">Estado (UF)</label>
+                        <select id="newLeadEstado" name="estado" class="mt-1"></select>
+                    </div>
+                </div>
+                <div><label for="newLeadEmail" class="block text-sm font-medium">Email</label><input type="email" id="newLeadEmail" name="email" class="mt-1"></div>
+                <div><label for="newLeadLinkedIn" class="block text-sm font-medium">LinkedIn</label><input type="url" id="newLeadLinkedIn" name="linkedin_contato" class="mt-1"></div>
+                <div><label for="newLeadSite" class="block text-sm font-medium">Website</label><input type="url" id="newLeadSite" name="site" class="mt-1"></div>
+                <div>
+                    <label for="newLeadOrigem" class="block text-sm font-medium">Origem do Lead</label>
+                    <select id="newLeadOrigem" name="origem_lead" class="mt-1"></select>
+                </div>
+                <input type="hidden" id="newLeadDataCriacao" name="data_criacao">
+                <div class="mt-6"><button type="submit" class="w-full modal-action-button">Adicionar Lead</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="editLeadModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border w-11/12 md:w-3/5 lg:max-w-3xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-content)] z-10">
+                <h3 class="text-xl font-semibold">Editar Lead</h3>
+                <button id="closeEditLeadModal" class="close-modal-btn">&times;</button>
+            </div>
+            <div class="text-extract-area">
+                <label for="editLeadPasteArea" class="block text-sm font-medium text-[var(--text-muted)] mb-1">Cole informações adicionais do lead aqui para extração:</label>
+                <textarea id="editLeadPasteArea" rows="3" class="w-full p-2 border rounded-md" placeholder="Ex: Email de assinatura, notas rápidas..."></textarea>
+                <button type="button" id="editLeadExtractBtn" class="action-button extract-data-btn mt-2">✨ Extrair Dados de Texto</button>
+            </div>
+            <form id="editLeadForm" class="space-y-4">
+                <input type="hidden" id="editLeadId" name="id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                    <div>
+                        <label for="editLeadNomeEmpresa" class="block text-sm font-medium">Nome da Empresa*</label><input type="text" id="editLeadNomeEmpresa" name="nome_empresa" required class="mt-1">
+                    </div>
+                    <div>
+                        <label for="editLeadPdv" class="block text-sm font-medium">Nº de PDVs (Lojas)</label>
+                        <input type="number" id="editLeadPdv" name="pdv" class="mt-1" min="0">
+                    </div>
+                    <div>
+                        <label for="editLeadMarca" class="block text-sm font-medium">Marca Principal</label>
+                        <select id="editLeadMarca" name="marca" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadContatoNome" class="block text-sm font-medium">Nome do Contacto</label><input type="text" id="editLeadContatoNome" name="contato_nome" class="mt-1">
+                    </div>
+                    <div>
+                        <label for="editLeadContatoCargo" class="block text-sm font-medium">Cargo do Contacto</label>
+                        <select id="editLeadContatoCargo" name="contato_cargo" class="mt-1"></select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="editLeadEndereco" class="block text-sm font-medium">Endereço</label><input type="text" id="editLeadEndereco" name="endereco" class="mt-1">
+                    </div>
+                    <div><label for="editLeadTelefone1" class="block text-sm font-medium">Telefone</label><input type="tel" id="editLeadTelefone1" name="telefone1" class="mt-1" placeholder="(XX) XXXXX-XXXX"></div>
+                    <div><label for="editLeadEmail" class="block text-sm font-medium">Email</label><input type="email" id="editLeadEmail" name="email" class="mt-1"></div>
+                    <div class="md:col-span-2">
+                        <label for="editLeadLinkedIn" class="block text-sm font-medium">LinkedIn</label><input type="url" id="editLeadLinkedIn" name="linkedin_contato" class="mt-1">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="editLeadSite" class="block text-sm font-medium">Website</label><input type="url" id="editLeadSite" name="site" class="mt-1">
+                    </div>
+                    <div>
+                        <label for="editLeadFezContato" class="block text-sm font-medium">Fez Contato?</label><select id="editLeadFezContato" name="fez_contato" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadStatusLead" class="block text-sm font-medium">Status Lead</label><select id="editLeadStatusLead" name="status_lead" class="mt-1"></select>
+                    </div>
+                    <div id="motivoPerdaContainer" class="hidden md:col-span-2">
+                        <label for="editLeadMotivoPerda" class="block text-sm font-medium">Motivo da Perda/Recusa</label>
+                        <select id="editLeadMotivoPerda" name="motivo_perda" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadTemperaturaLead" class="block text-sm font-medium">Temperatura Lead</label><select id="editLeadTemperaturaLead" name="temperatura_lead" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadReuniaoAgendada" class="block text-sm font-medium">Reunião Agendada?</label><select id="editLeadReuniaoAgendada" name="reuniao_agendada" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadEstado" class="block text-sm font-medium">Estado (UF)</label>
+                        <select id="editLeadEstado" name="estado" class="mt-1"></select>
+                    </div>
+                    <div><label for="editLeadCidade" class="block text-sm font-medium">Cidade</label><input type="text" id="editLeadCidade" name="cidade" class="mt-1"></div>
+                    <div>
+                        <label for="editLeadOrigem" class="block text-sm font-medium">Origem do Lead</label>
+                        <select id="editLeadOrigem" name="origem_lead" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadDataCriacao" class="block text-sm font-medium">Data Criação</label><input type="date" id="editLeadDataCriacao" name="data_criacao" class="mt-1" readonly style="background-color: var(--bg-interactive); opacity: 0.7;">
+                    </div>
+                    <div>
+                        <label for="editLeadDataTarefa" class="block text-sm font-medium">Data Tarefa Anterior</label><input type="date" id="editLeadDataTarefa" name="data_tarefa" class="mt-1">
+                    </div>
+                    <div>
+                        <label for="editLeadTipoTarefa" class="block text-sm font-medium">Tipo Tarefa Anterior</label><select id="editLeadTipoTarefa" name="tipo_tarefa" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadRespostaTarefa" class="block text-sm font-medium">Resposta Tarefa Anterior</label><select id="editLeadRespostaTarefa" name="resposta_tarefa" class="mt-1"></select>
+                    </div>
+                    <div>
+                        <label for="editLeadProximaTarefaData" class="block text-sm font-medium">Próxima Tarefa (Data)</label><input type="date" id="editLeadProximaTarefaData" name="proxima_tarefa_data" class="mt-1">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="editLeadObservacoesUsuario" class="block text-sm font-medium">Observações Usuário</label><textarea id="editLeadObservacoesUsuario" name="observacoes_usuario" rows="3" class="mt-1"></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="summarizeLeadHistoryBtn" class="action-button summarize-btn text-xs w-full mb-2">✨ Resumir Histórico do Lead</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Resumo do Histórico (IA):</h4>
+                    <pre id="leadHistorySummaryArea" class="text-sm p-3 rounded-md min-h-[80px]"></pre>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="getLeadInsightsBtn" class="action-button insights-btn text-xs w-full mb-2">✨ Obter Insights de Qualificação da IA</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Insights de Qualificação (IA):</h4>
+                    <pre id="leadInsightsArea" class="text-sm p-3 rounded-md min-h-[80px]"></pre>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="analyzeSentimentBtn" class="action-button sentiment-btn text-xs w-full mb-2">✨ Analisar Sentimento da Última Interação</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Análise de Sentimento (IA):</h4>
+                    <pre id="leadSentimentArea" class="text-sm p-3 rounded-md min-h-[50px]"></pre>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="generateFollowUpBtn" class="action-button followup-btn text-xs w-full mb-2">✨ Gerar Follow-up Personalizado</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Sugestão de Follow-up (IA):</h4>
+                    <textarea id="generatedFollowUpArea" rows="4" class="w-full p-2 border rounded-md mt-1" placeholder="A IA irá gerar uma sugestão de follow-up aqui..."></textarea>
+                    <button type="button" id="copyFollowUpBtn" class="action-button bg-blue-500 hover:bg-blue-600 text-xs mt-2">Copiar Follow-up</button>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="getIndustryNewsBtn" class="action-button industry-news-btn text-xs w-full mb-2">✨ Ver Notícias da Indústria</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Notícias/Tópicos da Indústria (IA):</h4>
+                    <pre id="industryNewsArea" class="text-sm p-3 rounded-md min-h-[80px]"></pre>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="getMeetingPrepBtn" class="action-button meeting-prep-btn text-xs w-full mb-2">✨ Preparar para Reunião</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Assistente de Preparação para Reunião (IA):</h4>
+                    <pre id="meetingPrepArea" class="text-sm p-3 rounded-md min-h-[100px]"></pre>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="getCompetitorAnalysisBtn" class="action-button bg-[var(--accent-danger-light)] text-[var(--accent-danger)] hover:bg-[var(--accent-danger)] hover:text-white text-xs w-full mb-2">✨ Análise Competitiva Breve</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Análise Competitiva (IA):</h4>
+                    <pre id="competitorAnalysisArea" class="text-sm p-3 rounded-md min-h-[80px]"></pre>
+                </div>
+                <div class="mt-4 pt-3 border-t border-[var(--border-color)]">
+                    <button type="button" id="getNurturingSequenceBtn" class="action-button bg-[var(--accent-info-light)] text-[var(--accent-info)] hover:bg-[var(--accent-info)] hover:text-white text-xs w-full mb-2">✨ Sugerir Sequência de Nurturing</button>
+                    <h4 class="text-md font-semibold mb-1 text-[var(--accent-secondary)]">Ideias para Sequência de Nurturing (IA):</h4>
+                    <pre id="nurturingSequenceArea" class="text-sm p-3 rounded-md min-h-[100px]"></pre>
+                </div>
+                <div class="mt-6 pt-4 border-t border-[var(--border-color)] flex justify-between">
+                    <button type="button" id="deleteLeadBtn" class="action-button delete-lead-btn">Excluir Lead</button>
+                    <button type="submit" class="modal-action-button">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="scriptModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-content)] z-10">
+                <h3 class="text-xl font-semibold">✨ Guião de Contacto Sugerido</h3>
+                <button id="closeScriptModal" class="close-modal-btn">&times;</button>
+            </div>
+            <div id="scriptModalContentContainer">
+                <p id="scriptModalInfo" class="text-sm mb-2 text-[var(--text-muted)]"></p>
+                <pre id="scriptModalContent" class="text-sm p-3 rounded-md"></pre>
+
+                <div id="scriptCustomizationSection" class="mt-4">
+                    <label for="leadPainPointsInput" class="block text-sm font-medium mb-1">Personalizar com Dores/Interesses do Lead:</label>
+                    <input type="text" id="leadPainPointsInput" class="w-full p-2 text-sm border-[var(--border-color)] rounded-md bg-[var(--bg-content)] text-[var(--text-content)] mb-2" placeholder="Ex: Reduzir custos, aumentar eficiência...">
+                    <button type="button" id="customizeScriptBtn" class="action-button customize-script-btn">✨ Personalizar Argumento</button>
+                    <pre id="customizedScriptArea" class="text-sm p-3 rounded-md mt-2 min-h-[50px]"></pre>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[var(--border-color)] text-right">
+                <button id="copyScriptBtn" class="modal-action-button bg-blue-500 hover:bg-blue-600">Copiar Guião</button>
             </div>
         </div>
-    </main>
+    </div>
 
-    <footer>
-        <p>&copy; 2025 AutoArremate. Todos os direitos reservados.</p> </footer>
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="emailModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-content)] z-10">
+                <h3 class="text-xl font-semibold">✨ Minuta de Email Sugerida</h3>
+                <button id="closeEmailModal" class="close-modal-btn">&times;</button>
+            </div>
+            <div id="emailModalContentContainer">
+                <p id="emailModalInfo" class="text-sm mb-2 text-[var(--text-muted)]"></p>
+                <pre id="emailModalContent" class="text-sm p-3 rounded-md"></pre>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[var(--border-color)] text-right">
+                <button id="copyEmailBtn" class="modal-action-button bg-blue-500 hover:bg-blue-600">Copiar Email</button>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        // Script para funcionalidade de expandir/recolher
-        document.addEventListener('DOMContentLoaded', function () {
-            const togglers = document.querySelectorAll('.toggler');
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="nextTaskModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-content)] z-10">
+                <h3 class="text-xl font-semibold">✨ Sugestão de Próxima Ação</h3>
+                <button id="closeNextTaskModal" class="close-modal-btn">&times;</button>
+            </div>
+            <p id="nextTaskModalInfoFor" class="text-sm mb-1 font-semibold text-[var(--text-main)]"></p>
+            <div id="nextTaskModalContentContainer" class="space-y-3">
+                <div>
+                    <label class="text-[var(--text-muted)]">Sugestão Original da IA:</label>
+                    <pre id="originalNextTaskSuggestion" class="text-sm p-3 rounded-md mt-1"></pre>
+                </div>
+                <div>
+                    <label for="refinedNextTaskDescription">Descrição da Próxima Tarefa (ajuste se necessário):</label>
+                    <textarea id="refinedNextTaskDescription" rows="3" class="w-full mt-1"></textarea>
+                </div>
+                <div>
+                    <label for="refinedNextTaskDate">Data da Próxima Tarefa:</label>
+                    <input type="date" id="refinedNextTaskDate" class="w-full mt-1">
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-[var(--border-color)] text-right">
+                <button id="applyRefinedNextTaskBtn" class="modal-action-button bg-green-500 hover:bg-green-600">Aplicar Tarefa ao Lead</button>
+            </div>
+        </div>
+    </div>
 
-            togglers.forEach(toggler => {
-                let childrenContainer = toggler.parentElement.querySelector('.main-branches-container'); 
-                if (!childrenContainer || childrenContainer.parentElement !== toggler.parentElement) { 
-                    childrenContainer = toggler.parentElement.querySelector(':scope > .children'); 
-                }
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="enrichModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-content)] z-10">
+                <h3 class="text-xl font-semibold">🔍 Enriquecer Dados do Lead</h3>
+                <button id="closeEnrichModal" class="close-modal-btn">&times;</button>
+            </div>
+            <p id="enrichModalInfo" class="text-sm mb-3 font-semibold text-[var(--text-main)]"></p>
 
-                if (childrenContainer) { 
-                    toggler.addEventListener('click', function (event) {
-                        event.stopPropagation(); 
-                        childrenContainer.classList.toggle('hidden');
-                        toggler.classList.toggle('expanded'); // A classe 'expanded' pode ser usada para outros estilos, se necessário
-                    });
-                } else {
-                    if(toggler.classList.contains('toggler')){ 
-                        toggler.classList.remove('toggler');
-                        toggler.classList.add('leaf-node'); 
-                    }
-                }
-            });
+            <div class="mb-4 p-3 border border-[var(--border-color)] rounded-md bg-[var(--bg-interactive)]">
+                <label for="enrichLeadCepInput" class="block text-sm font-medium text-[var(--text-muted)]">CEP (para buscar endereço):</label>
+                <div class="flex items-center mt-1">
+                    <input type="text" id="enrichLeadCepInput" class="mr-2" placeholder="00000-000">
+                    <button id="fetchAddressByCepBtn" class="action-button bg-indigo-500 hover:bg-indigo-600 text-white text-xs">Buscar por CEP</button>
+                </div>
+            </div>
 
-            // Opcional: Expandir o primeiro nível por padrão
-            const centralTopic = document.getElementById('central-topic');
-            if (centralTopic) {
-                const firstLevelChildrenContainer = centralTopic.parentElement.querySelector('.main-branches-container');
-                if (firstLevelChildrenContainer) {
-                    firstLevelChildrenContainer.classList.remove('hidden');
-                    centralTopic.classList.add('expanded');
-                }
-            }
-        });
-    </script>
+            <div id="enrichModalFields" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 mb-4">
+                <div>
+                    <label for="enrichLeadTelefoneInput">Telefone:</label>
+                    <input type="tel" id="enrichLeadTelefoneInput" class="w-full mt-1">
+                </div>
+                <div>
+                    <label for="enrichLeadEmailInput">Email:</label>
+                    <input type="email" id="enrichLeadEmailInput" class="w-full mt-1">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="enrichLeadWebsiteInput">Website:</label>
+                    <input type="url" id="enrichLeadWebsiteInput" class="w-full mt-1">
+                </div>
+                <div>
+                    <label for="enrichLeadContatoNomeInput">Nome do Contacto:</label>
+                    <input type="text" id="enrichLeadContatoNomeInput" class="w-full mt-1">
+                </div>
+                <div>
+                    <label for="enrichLeadContatoCargoInput">Cargo do Contacto:</label>
+                    <input type="text" id="enrichLeadContatoCargoInput" class="w-full mt-1">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="enrichLeadLinkedInInput">LinkedIn:</label>
+                    <input type="url" id="enrichLeadLinkedInInput" class="w-full mt-1">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="enrichLeadLogradouroInput">Logradouro (Rua):</label>
+                    <input type="text" id="enrichLeadLogradouroInput" class="w-full mt-1">
+                </div>
+                <div>
+                    <label for="enrichLeadBairroInput">Bairro:</label>
+                    <input type="text" id="enrichLeadBairroInput" class="w-full mt-1">
+                </div>
+                <div>
+                    <label for="enrichLeadCidadeInput">Cidade:</label>
+                    <input type="text" id="enrichLeadCidadeInput" class="w-full mt-1">
+                </div>
+                <div>
+                    <label for="enrichLeadEstadoInput">Estado (UF):</label>
+                    <input type="text" id="enrichLeadEstadoInput" class="w-full mt-1" maxlength="2">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="enrichLeadObservacoesApiInput">Observações da Pesquisa (API Gemini):</label>
+                    <textarea id="enrichLeadObservacoesApiInput" rows="2" class="w-full mt-1 bg-[var(--bg-interactive)]" readonly></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label for="enrichLeadObservacoesInput">Outras Observações (para adicionar ao lead):</label>
+                    <textarea id="enrichLeadObservacoesInput" rows="3" class="w-full mt-1"></textarea>
+                </div>
+            </div>
+            <div class="mb-4">
+                <h4 class="text-md font-semibold mb-1 text-[var(--text-main)]">Resposta Bruta da API Gemini (Enriquecimento):</h4>
+                <pre id="enrichModalRawContent" class="text-xs p-2 rounded-md"></pre>
+            </div>
+            <div class="mt-6 pt-4 border-t border-[var(--border-color)] text-right">
+                <button id="applyEnrichDataBtn" class="modal-action-button bg-green-500 hover:bg-green-600">Aplicar ao Lead</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-40 hidden general-modal" id="interactionModal">
+        <div class="modal-content relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 border shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-content)] z-10">
+                <h3 class="text-xl font-semibold">💬 Interação Guiada com IA</h3>
+                <button id="closeInteractionModal" class="close-modal-btn">&times;</button>
+            </div>
+            <p id="interactionModalLeadInfo" class="text-sm mb-3 font-semibold text-[var(--text-main)]"></p>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-[var(--text-muted)]">Sugestão da IA:</label>
+                <div id="iaSuggestionArea" class="p-3 border rounded-md min-h-[70px] mt-1"></div>
+            </div>
+            <div class="mb-4">
+                <label for="userInputResponse" class="block text-sm font-medium text-[var(--text-muted)]">Resposta do Lead / Objeção:</label>
+                <textarea id="userInputResponse" rows="3" class="w-full p-2 border rounded-md mt-1" placeholder="Insira a resposta ou objeção do lead aqui..."></textarea>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-[var(--border-color)] gap-3">
+                <button id="handleObjectionBtn" class="action-button objection-btn w-full sm:w-auto">✨ Ajudar com Objeção</button>
+                <button id="attemptScheduleBtn" class="modal-action-button bg-purple-500 hover:bg-purple-600 w-full sm:w-auto">🗓️ Tentar Agendar</button>
+                <button id="sendResponseBtn" class="modal-action-button bg-blue-500 hover:bg-blue-600 w-full sm:w-auto">Enviar Resposta e Obter Próximo Passo</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmationModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full z-50 hidden items-center justify-center">
+        <div class="modal-content p-6 border shadow-xl max-w-sm">
+            <h3 id="confirmationModalTitle" class="text-lg font-semibold mb-4">Confirmar Ação</h3>
+            <p id="confirmationModalMessage" class="text-sm mb-6">Tem certeza de que deseja executar esta ação?</p>
+            <div class="flex justify-end gap-3">
+                <button id="confirmCancelBtn" class="action-button bg-gray-300 hover:bg-gray-400 text-gray-800">Cancelar</button>
+                <button id="confirmActionBtn" class="action-button delete-lead-btn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="loadingOverlay" class="loading-spinner-overlay">
+        <div class="spinner"></div>
+    </div>
+
 </body>
+
 </html>
